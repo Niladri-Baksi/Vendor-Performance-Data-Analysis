@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 import logging
 import time
 from urllib.parse import quote_plus
+from dotenv import load_dotenv
 
 logging.basicConfig(
     filename="logs/ingestion_db.log",
@@ -17,10 +18,12 @@ def ingest_db(df,table_name,engine):
     df.to_sql(table_name, con=engine, if_exists='replace', index=False) #if_exists=append when continuous data insertion needed
     
 
-username = "root"
-password = quote_plus("niladri-mysql@27")
-host = "localhost"
-database = "vendor_analysis"
+load_dotenv()
+
+username = os.getenv("username")
+password = quote_plus(os.getenv("password"))
+host = os.getenv("host")
+database = os.getenv("database")
 
 engine = create_engine(
     f"mysql+pymysql://{username}:{password}@{host}/{database}"
