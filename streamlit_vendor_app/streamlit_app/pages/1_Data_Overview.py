@@ -114,32 +114,68 @@ info_box(
 )
 
 # ─── Top & Bottom vendors table ───────────────────────────────────────────────
+
 st.markdown("<hr style='border:none;border-top:1px solid rgba(124,110,250,0.15);margin:1.4rem 0'>", unsafe_allow_html=True)
-sec_label("Top & Bottom Performers by Gross Profit")
+sec_label("Full Dataset Explorer")
 
-disp_cols = ["VendorName","Description","ProfitMargin","GrossProfit",
-             "TotalSalesDollars","StockTurnover"]
+with st.expander("🔍 Browse all 10,019 records (click to expand)", expanded=False):
+    search = st.text_input("Filter by Vendor Name or Description", placeholder="Type to search…")
+    
+    display_df = df.copy()
+    if search:
+        mask = (
+            display_df["VendorName"].str.contains(search, case=False, na=False) |
+            display_df["Description"].str.contains(search, case=False, na=False)
+        )
+        display_df = display_df[mask]
+        st.caption(f"{len(display_df):,} records match '{search}'")
+    else:
+        st.caption(f"Showing all {len(display_df):,} records — scroll to explore")
 
-tab1, tab2 = st.tabs(["🏆 Top 20 by Gross Profit", "⚠️ Bottom 20 by Gross Profit"])
-
-with tab1:
-    top = df.nlargest(20, "GrossProfit")[disp_cols].reset_index(drop=True)
     st.dataframe(
-        top.style
-            .format({"ProfitMargin": "{:.1f}%", "GrossProfit": "${:,.0f}",
-                     "TotalSalesDollars": "${:,.0f}", "StockTurnover": "{:.3f}"})
-            .background_gradient(subset=["GrossProfit"], cmap="Greens"),
+        display_df[[
+            "VendorNumber", "VendorName", "Brand", "Description",
+            "PurchasePrice", "ActualPrice", "Volume",
+            "TotalPurchaseQuantity", "TotalSalesQuantity",
+            "TotalSalesDollars", "GrossProfit", "ProfitMargin", "StockTurnover"
+        ]].style.format({
+            "ProfitMargin"     : "{:.1f}%",
+            "StockTurnover"    : "{:.3f}",
+            "GrossProfit"      : "${:,.0f}",
+            "TotalSalesDollars": "${:,.0f}",
+            "PurchasePrice"    : "${:.2f}",
+            "ActualPrice"      : "${:.2f}",
+        }),
         use_container_width=True,
-        height=460,
+        height=550,
     )
+    
+# st.markdown("<hr style='border:none;border-top:1px solid rgba(124,110,250,0.15);margin:1.4rem 0'>", unsafe_allow_html=True)
+# sec_label("Top & Bottom Performers by Gross Profit")
 
-with tab2:
-    bot = df.nsmallest(20, "GrossProfit")[disp_cols].reset_index(drop=True)
-    st.dataframe(
-        bot.style
-            .format({"ProfitMargin": "{:.1f}%", "GrossProfit": "${:,.0f}",
-                     "TotalSalesDollars": "${:,.0f}", "StockTurnover": "{:.3f}"})
-            .background_gradient(subset=["GrossProfit"], cmap="Reds_r"),
-        use_container_width=True,
-        height=460,
-    )
+# disp_cols = ["VendorName","Description","ProfitMargin","GrossProfit",
+#              "TotalSalesDollars","StockTurnover"]
+
+# tab1, tab2 = st.tabs(["🏆 Top 20 by Gross Profit", "⚠️ Bottom 20 by Gross Profit"])
+
+# with tab1:
+#     top = df.nlargest(20, "GrossProfit")[disp_cols].reset_index(drop=True)
+#     st.dataframe(
+#         top.style
+#             .format({"ProfitMargin": "{:.1f}%", "GrossProfit": "${:,.0f}",
+#                      "TotalSalesDollars": "${:,.0f}", "StockTurnover": "{:.3f}"})
+#             .background_gradient(subset=["GrossProfit"], cmap="Greens"),
+#         use_container_width=True,
+#         height=460,
+#     )
+
+# with tab2:
+#     bot = df.nsmallest(20, "GrossProfit")[disp_cols].reset_index(drop=True)
+#     st.dataframe(
+#         bot.style
+#             .format({"ProfitMargin": "{:.1f}%", "GrossProfit": "${:,.0f}",
+#                      "TotalSalesDollars": "${:,.0f}", "StockTurnover": "{:.3f}"})
+#             .background_gradient(subset=["GrossProfit"], cmap="Reds_r"),
+#         use_container_width=True,
+#         height=460,
+#     )

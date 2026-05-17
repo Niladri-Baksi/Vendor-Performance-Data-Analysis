@@ -1,4 +1,6 @@
 dataset/
+ignore/
+models/
 
 __pycache__/
 *.pyc
@@ -17,5 +19,6 @@ logs/
 *.h5
 *.pt
 *.pth
+*.pkl
 
 *.db

@@ -34,7 +34,8 @@ info_box(
 )
 
 # ─── Train / load models ──────────────────────────────────────────────────────
-with st.spinner("Training models (cached after first run)…"):
+# with st.spinner("Training models (cached after first run)…"):
+with st.spinner("Loading models…"):
     rf, xgb, X_test, y_test, feat_names = get_regression_models()
 
 rf_preds  = rf.predict(X_test)
@@ -153,7 +154,19 @@ if submitted:
     row["TotalSalesQuantity"]    = sales_qty
     row["PriceMarkup"]           = (actual_price - purchase_price) / max(purchase_price, 0.01)
     row["FreightPerUnit"]        = freight_cost / max(purchase_qty, 1)
-    row["OrderSize"]             = float(min(3, purchase_qty // max(int(df["TotalPurchaseQuantity"].quantile(0.25)), 1)))
+    # Use the same quantile boundaries as training (pd.qcut q=4) for OrderSize
+    q_bounds = df["TotalPurchaseQuantity"].quantile([0.25, 0.5, 0.75]).values
+    if purchase_qty <= q_bounds[0]:
+        row["OrderSize"] = 0.0
+    elif purchase_qty <= q_bounds[1]:
+        row["OrderSize"] = 1.0
+    elif purchase_qty <= q_bounds[2]:
+        row["OrderSize"] = 2.0
+    else:
+        row["OrderSize"] = 3.0
+    # row["PriceMarkup"]           = (actual_price - purchase_price) / max(purchase_price, 0.01)
+    # row["FreightPerUnit"]        = freight_cost / max(purchase_qty, 1)
+    # row["OrderSize"]             = float(min(3, purchase_qty // max(int(df["TotalPurchaseQuantity"].quantile(0.25)), 1)))
 
     pred = float(xgb.predict(pd.DataFrame([row]))[0])
 

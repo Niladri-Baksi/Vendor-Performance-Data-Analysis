@@ -6,7 +6,7 @@ import streamlit as st
 import plotly.express as px
 from utils import (
     apply_css, render_sidebar, page_header,
-    info_box, sec_label, load_data, COLORS, PLOT_BASE, plotly_fig,
+    info_box, sec_label, load_data, COLORS, PLOT_BASE
 )
 
 st.set_page_config(
