@@ -42,8 +42,8 @@ def load_raw_data():
     total_time = (end - start)/60
     logging.info(f"All files ingested successfully in {total_time:.2f} minutes")
 
-    if __name__ == "__main__":
-        load_raw_data()
+if __name__ == "__main__":
+    load_raw_data()
 
 #what this does is if its run directly then it calls the fn but if its imported as a module it skips the fn call and only defines the fn which can be called from the importing module.
 #this is useful when we want to use the ingest_db fn in other modules without running the load_raw_data fn hence skipping the heavy processing of the files again and again.
