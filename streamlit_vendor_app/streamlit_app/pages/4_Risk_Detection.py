@@ -90,9 +90,19 @@ def _scatter(col, flag_col, title):
     fig.update_xaxes(range=[0, xlim])
     fig.update_yaxes(range=[df["ProfitMargin"].quantile(0.01), 100])
     fig.update_layout(
-        legend=dict(title="", orientation="h", yanchor="bottom", y=1.02),
-        xaxis_title="Stock Turnover", yaxis_title="Profit Margin (%)",
-        height=420, **PLOT_BASE,
+        legend=dict(
+            title="",
+            orientation="h",
+            yanchor="top",
+            y=-0.18,
+            xanchor="center",
+            x=0.5,
+        ),
+        xaxis_title="Stock Turnover",
+        yaxis_title="Profit Margin (%)",
+        height=440,
+        margin=dict(l=20, r=20, t=48, b=70),
+        **{k: v for k, v in PLOT_BASE.items() if k != "margin"},
     )
     col.plotly_chart(fig, use_container_width=True)
 
