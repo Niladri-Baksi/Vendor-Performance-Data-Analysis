@@ -27,12 +27,11 @@ page_header(
 info_box(
     "🔍 &nbsp;Two complementary approaches: "
     "<strong>Rule-based</strong> (both metrics below 25th percentile — transparent) "
-    "and <strong>Isolation Forest</strong> (statistical anomaly across 9 financial features — catches subtler patterns). "
+    "and <strong>Isolation Forest</strong> (statistical anomaly across 4 core financial features — catches subtler patterns). "
     "Vendors flagged by <em>both</em> are highest priority."
 )
 
 df_raw = load_data()
-# with st.spinner("Running anomaly detection (cached after first run)…"):
 with st.spinner("Loading anomaly detector…"):
     df = get_risk_flags(df_raw)
 
@@ -45,10 +44,10 @@ sec_label("Detection Thresholds")
 t1, t2, t3, t4 = st.columns(4)
 t1.metric("Margin threshold (25th pct)",   f"{pm_thresh:.1f}%")
 t2.metric("Turnover threshold (25th pct)", f"{st_thresh:.3f}")
-t3.metric("IsoForest contamination",       "7%")
-t4.metric("IsoForest features",            "9")
+t3.metric("IsoForest contamination",       "10%")
+t4.metric("IsoForest features",            f"{len(ANOMALY_FEATURES)}")
 
-st.markdown("<hr style='border:none;border-top:1px solid rgba(124,110,250,0.15);margin:1.4rem 0'>", unsafe_allow_html=True)
+st.markdown("<hr style='border:none;border-top:1px solid rgba(249,115,22,0.15);margin:1.4rem 0'>", unsafe_allow_html=True)
 
 # ─── Method comparison ────────────────────────────────────────────────────────
 sec_label("Method Comparison")
@@ -65,7 +64,7 @@ m3.metric("Flagged by both",   f"{n_both:,}",   delta="Highest priority")
 m4.metric("Only rule-based",   f"{n_only_r:,}", delta="Obvious risk")
 m5.metric("Only IsoForest",    f"{n_only_i:,}", delta="Subtle anomalies")
 
-st.markdown("<hr style='border:none;border-top:1px solid rgba(124,110,250,0.15);margin:1.4rem 0'>", unsafe_allow_html=True)
+st.markdown("<hr style='border:none;border-top:1px solid rgba(249,115,22,0.15);margin:1.4rem 0'>", unsafe_allow_html=True)
 
 # ─── Scatter plots ────────────────────────────────────────────────────────────
 sec_label("Risk Zone Visualisation")
@@ -90,14 +89,7 @@ def _scatter(col, flag_col, title):
     fig.update_xaxes(range=[0, xlim])
     fig.update_yaxes(range=[df["ProfitMargin"].quantile(0.01), 100])
     fig.update_layout(
-        legend=dict(
-            title="",
-            orientation="h",
-            yanchor="top",
-            y=-0.18,
-            xanchor="center",
-            x=0.5,
-        ),
+        legend=dict(title="", orientation="h", yanchor="top", y=-0.18, xanchor="center", x=0.5),
         xaxis_title="Stock Turnover",
         yaxis_title="Profit Margin (%)",
         height=440,
@@ -125,7 +117,7 @@ fig_dist.update_layout(barmode="overlay", xaxis_title="Anomaly Score (higher = m
 st.plotly_chart(fig_dist, use_container_width=True)
 
 # ─── Risky vendor tables ──────────────────────────────────────────────────────
-st.markdown("<hr style='border:none;border-top:1px solid rgba(124,110,250,0.15);margin:1.4rem 0'>", unsafe_allow_html=True)
+st.markdown("<hr style='border:none;border-top:1px solid rgba(249,115,22,0.15);margin:1.4rem 0'>", unsafe_allow_html=True)
 sec_label("Risky Vendor Records")
 view_cols = ["VendorName","Description","ProfitMargin","StockTurnover",
              "GrossProfit","TotalSalesDollars","AnomalyScore","RiskFlag_Rule","RiskFlag_IsoForest"]
@@ -150,7 +142,7 @@ for tab, mask in [
             use_container_width=True, height=400,
         )
 
-st.markdown("<hr style='border:none;border-top:1px solid rgba(124,110,250,0.15);margin:1.4rem 0'>", unsafe_allow_html=True)
+st.markdown("<hr style='border:none;border-top:1px solid rgba(249,115,22,0.15);margin:1.4rem 0'>", unsafe_allow_html=True)
 
 # ─── NEW-VENDOR RISK PREDICTOR ────────────────────────────────────────────────
 sec_label("🔮 Score a New Vendor for Risk")
@@ -158,7 +150,7 @@ info_box(
     "Enter the financial profile of a new or hypothetical vendor. "
     "The app instantly returns both a <strong>rule-based verdict</strong> "
     "(direct threshold comparison) and an <strong>Isolation Forest score</strong> "
-    "(statistical comparison against all 10,019 existing vendors)."
+    f"(statistical comparison against all {len(df_raw):,} existing vendors)."
 )
 
 df_raw2 = load_data()
@@ -177,16 +169,9 @@ with st.form("risk_predict_form"):
 
     st.markdown("**Financial Totals**")
     c1, c2, c3 = st.columns(3)
-    sales_dollars    = c1.number_input("Total Sales Dollars ($)",    min_value=0.0, value=float(df_raw2["TotalSalesDollars"].median()),step=500.0)
-    purchase_dollars = c2.number_input("Total Purchase Dollars ($)", min_value=0.0, value=float(df_raw2["TotalPurchaseDollars"].median()), step=500.0)
-    gross_profit    = c3.number_input("Gross Profit ($)",          min_value=-5e4, max_value=2e6, value=float(df_raw2["GrossProfit"].median()),step=500.0)
-
-    st.markdown("**Per-Unit Costs & Ratio**")
-    d1, d2, d3 = st.columns(3)
-    freight_per_u = d1.number_input("Freight Per Unit ($)", 0.0, 500.0, float(df_raw2["FreightPerUnit"].median()), step=0.5)
-    tax_per_u     = d2.number_input("Tax Per Unit ($)",     0.0, 100.0, float(df_raw2["TaxPerUnit"].median()),    step=0.1)
-    price_markup  = d3.number_input("Price Markup (ratio)", -1.0, 10.0, float(df_raw2["PriceMarkup"].median()),   step=0.05,
-                                    help="(ActualPrice - PurchasePrice) / PurchasePrice")
+    gross_profit      = c1.number_input("Gross Profit ($)", min_value=-5e4, max_value=2e6, value=float(df_raw2["GrossProfit"].median()), step=500.0)
+    sales_dollars     = c2.number_input("Total Sales Dollars ($)",    min_value=0.0, value=float(df_raw2["TotalSalesDollars"].median()),    step=500.0)
+    purchase_dollars  = c3.number_input("Total Purchase Dollars ($)", min_value=0.0, value=float(df_raw2["TotalPurchaseDollars"].median()), step=500.0)
 
     sales_purchase_ratio = sales_dollars / max(purchase_dollars, 0.01)
 
@@ -198,16 +183,10 @@ if submitted:
         "StockTurnover"       : stock_turnover,
         "GrossProfit"         : gross_profit,
         "SalestoPurchaseRatio": sales_purchase_ratio,
-        "TotalSalesDollars"   : sales_dollars,
-        "TotalPurchaseDollars": purchase_dollars,
-        "FreightPerUnit"      : freight_per_u,
-        "TaxPerUnit"          : tax_per_u,
-        "PriceMarkup"         : price_markup,
     }
 
     res = predict_risk(feat_vals)
 
-    # ── Two verdict cards side by side ──────────────────────────────────────
     st.markdown("<br>", unsafe_allow_html=True)
     vc_l, vc_r = st.columns(2)
 
@@ -235,12 +214,11 @@ if submitted:
         f"Anomaly Score: {res['iso_score']:.4f} &nbsp;({'above' if res['iso_flag'] else 'below'} risk threshold)"
     )
 
-    # Overall verdict
     st.markdown("<br>", unsafe_allow_html=True)
     if res["rule_flag"] and res["iso_flag"]:
         danger_box("🚨 &nbsp;<strong>Both methods flag this vendor as RISKY.</strong> Highest priority — "
                    "the rule-based threshold confirms low margin + low turnover, and Isolation Forest "
-                   "confirms statistical anomaly across all financial dimensions.")
+                   "confirms statistical anomaly across the core financial dimensions.")
     elif res["rule_flag"] or res["iso_flag"]:
         warn_box("⚠️ &nbsp;<strong>One method flags this vendor.</strong> Monitor closely. "
                  "Consider reviewing pricing strategy and inventory management.")

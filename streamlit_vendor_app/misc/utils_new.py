@@ -153,8 +153,8 @@ def render_sidebar() -> None:
         st.page_link("pages/3_Performance_Class.py", label="🏷️ Performance Classifier")
         st.page_link("pages/4_Risk_Detection.py",    label="⚠️ Risk Detector")
 
-        # st.markdown("---")
-        # st.caption("➕ Add pages to `pages/` and a link above to extend.")
+        st.markdown("---")
+        st.caption("➕ Add pages to `pages/` and a link above to extend.")
 
 
 # ─── Page header & callout helpers ───────────────────────────────────────────

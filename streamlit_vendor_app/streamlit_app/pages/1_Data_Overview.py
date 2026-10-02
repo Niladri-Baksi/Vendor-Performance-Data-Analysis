@@ -27,7 +27,7 @@ c2.metric("Unique Vendors",      f"{df['VendorNumber'].nunique():,}")
 c3.metric("Unique Brands",       f"{df['Brand'].nunique():,}")
 c4.metric("Features Available",  f"{len(df.columns)}")
 
-st.markdown("<hr style='border:none;border-top:1px solid rgba(124,110,250,0.15);margin:1.4rem 0'>", unsafe_allow_html=True)
+st.markdown("<hr style='border:none;border-top:1px solid rgba(249,115,22,0.15);margin:1.4rem 0'>", unsafe_allow_html=True)
 
 # ─── Key distributions (2×2) ──────────────────────────────────────────────────
 sec_label("Key Column Distributions")
@@ -73,7 +73,7 @@ fig_dist.update_layout(title_text="", margin=dict(l=20, r=20, t=40, b=20))
 st.plotly_chart(fig_dist, use_container_width=True)
 
 # ─── Correlation heatmap ──────────────────────────────────────────────────────
-st.markdown("<hr style='border:none;border-top:1px solid rgba(124,110,250,0.15);margin:1.4rem 0'>", unsafe_allow_html=True)
+st.markdown("<hr style='border:none;border-top:1px solid rgba(249,115,22,0.15);margin:1.4rem 0'>", unsafe_allow_html=True)
 sec_label("Correlation Heatmap")
 
 CORR_COLS = [
@@ -89,8 +89,9 @@ fig_corr = go.Figure(go.Heatmap(
     z=corr.values,
     x=corr.columns.tolist(),
     y=corr.index.tolist(),
-    colorscale="RdBu",
-    zmid=0,
+    colorscale="Oranges",
+    # zmid=0,
+    zmin=-0.3, zmax=1,
     text=corr.values.round(2),
     texttemplate="%{text}",
     textfont=dict(size=9),
@@ -110,17 +111,17 @@ info_box(
     "🔑 &nbsp; Strong positive correlations appear between <strong>TotalSalesDollars</strong>, "
     "<strong>TotalPurchaseDollars</strong>, and <strong>GrossProfit</strong> — as expected. "
     "Notice that <strong>SalestoPurchaseRatio</strong> is strongly correlated with "
-    "<strong>ProfitMargin</strong>, which is why it is excluded from the regression model features."
+    "<strong>ProfitMargin</strong>, which is why it is excluded from the model feature set."
 )
 
-# ─── Top & Bottom vendors table ───────────────────────────────────────────────
+# ─── Full dataset explorer ─────────────────────────────────────────────────────
 
-st.markdown("<hr style='border:none;border-top:1px solid rgba(124,110,250,0.15);margin:1.4rem 0'>", unsafe_allow_html=True)
+st.markdown("<hr style='border:none;border-top:1px solid rgba(249,115,22,0.15);margin:1.4rem 0'>", unsafe_allow_html=True)
 sec_label("Full Dataset Explorer")
 
-with st.expander("🔍 Browse all 10,019 records (click to expand)", expanded=False):
+with st.expander(f"🔍 Browse all {len(df):,} records (click to expand)", expanded=False):
     search = st.text_input("Filter by Vendor Name or Description", placeholder="Type to search…")
-    
+
     display_df = df.copy()
     if search:
         mask = (
@@ -149,33 +150,3 @@ with st.expander("🔍 Browse all 10,019 records (click to expand)", expanded=Fa
         use_container_width=True,
         height=550,
     )
-    
-# st.markdown("<hr style='border:none;border-top:1px solid rgba(124,110,250,0.15);margin:1.4rem 0'>", unsafe_allow_html=True)
-# sec_label("Top & Bottom Performers by Gross Profit")
-
-# disp_cols = ["VendorName","Description","ProfitMargin","GrossProfit",
-#              "TotalSalesDollars","StockTurnover"]
-
-# tab1, tab2 = st.tabs(["🏆 Top 20 by Gross Profit", "⚠️ Bottom 20 by Gross Profit"])
-
-# with tab1:
-#     top = df.nlargest(20, "GrossProfit")[disp_cols].reset_index(drop=True)
-#     st.dataframe(
-#         top.style
-#             .format({"ProfitMargin": "{:.1f}%", "GrossProfit": "${:,.0f}",
-#                      "TotalSalesDollars": "${:,.0f}", "StockTurnover": "{:.3f}"})
-#             .background_gradient(subset=["GrossProfit"], cmap="Greens"),
-#         use_container_width=True,
-#         height=460,
-#     )
-
-# with tab2:
-#     bot = df.nsmallest(20, "GrossProfit")[disp_cols].reset_index(drop=True)
-#     st.dataframe(
-#         bot.style
-#             .format({"ProfitMargin": "{:.1f}%", "GrossProfit": "${:,.0f}",
-#                      "TotalSalesDollars": "${:,.0f}", "StockTurnover": "{:.3f}"})
-#             .background_gradient(subset=["GrossProfit"], cmap="Reds_r"),
-#         use_container_width=True,
-#         height=460,
-#     )
