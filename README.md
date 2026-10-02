@@ -1,6 +1,6 @@
 # Vendor Performance Data Analysis
 
-An end-to-end data analytics and machine learning project I built to analyze vendor and brand performance using sales, purchasing, pricing, inventory, and freight data.
+An end-to-end data analytics and machine learning project for analyzing vendor and brand performance using sales, purchasing, pricing, inventory, and freight data.
 
 The project combines SQL-based data aggregation, data cleaning, exploratory data analysis, visualization, feature engineering, and machine learning to answer practical business questions such as:
 
@@ -12,11 +12,13 @@ The project combines SQL-based data aggregation, data cleaning, exploratory data
 - Can vendors be classified into High, Medium, and Low performance categories?
 - Can potentially risky or anomalous vendors be detected automatically?
 
+---
+
 ## Project Objective
 
 Effective vendor and inventory management is important for maintaining profitability and reducing unnecessary costs.
 
-In this project, I analyze vendor performance from multiple perspectives, including:
+This project focuses on analyzing vendor performance from multiple perspectives, including:
 
 - Sales performance
 - Purchase performance
@@ -28,11 +30,13 @@ In this project, I analyze vendor performance from multiple perspectives, includ
 - Performance classification
 - Risk and anomaly detection
 
-My overall goal is to transform raw transactional data into a structured analytical dataset and then use statistical analysis and machine learning to generate actionable vendor-level insights.
+The overall goal is to transform raw transactional data into a structured analytical dataset and then use statistical analysis and machine learning to generate actionable vendor-level insights.
+
+---
 
 ## Business Problems Addressed
 
-My analysis is designed to:
+The analysis is designed to:
 
 1. Identify underperforming brands that may require pricing or promotional adjustments.
 2. Identify vendors contributing significantly to sales and gross profit.
@@ -42,6 +46,8 @@ My analysis is designed to:
 6. Predict expected profit margin for a vendor-brand combination.
 7. Classify vendors into High, Medium, and Low performance categories.
 8. Detect unusual or potentially risky vendor records using rule-based and anomaly-detection methods.
+
+---
 
 ## Project Pipeline
 
@@ -79,7 +85,7 @@ vendor_sales_summary
                               Streamlit Application
 ```
 
-Execution Order:
+### Execution Order
 
 ```text
 Raw Data
@@ -114,7 +120,9 @@ The project starts with multiple raw CSV files containing information related to
 - Freight
 - Vendor and brand information
 
-I load the raw files into MySQL so that the project can perform structured SQL-based aggregation and joins before the analytical stage.
+The raw files are loaded into MySQL so that the project can perform structured SQL-based aggregation and joins before the analytical stage.
+
+---
 
 ## 2. Database Ingestion
 
@@ -137,7 +145,10 @@ MySQL Table
 ```
 
 The script uses `to_sql()` with `if_exists="replace"`, meaning the corresponding table is recreated when the ingestion process is rerun.
+
 This makes the ingestion process useful when rebuilding the database from the original raw dataset.
+
+---
 
 ## 3. Database Connection
 
@@ -170,6 +181,8 @@ from the environment and constructs a MySQL connection using the PyMySQL driver.
 
 For security, database credentials should not be hard-coded into the source code.
 
+---
+
 ## 4. ETL and Data Preparation
 
 ### `EDAscript.py`
@@ -194,22 +207,24 @@ These summaries are then joined using vendor and brand identifiers.
 
 The resulting analytical table contains information such as:
 
-- VendorNumber
-- VendorName
-- Brand
-- Description
-- PurchasePrice
-- Volume
-- ActualPrice
-- TotalPurchaseQuantity
-- TotalPurchaseDollars
-- TotalSalesQuantity
-- TotalSalesDollars
-- TotalSalesPrice
-- TotalExciseTax
-- TotalFreightCost
+- `VendorNumber`
+- `VendorName`
+- `Brand`
+- `Description`
+- `PurchasePrice`
+- `Volume`
+- `ActualPrice`
+- `TotalPurchaseQuantity`
+- `TotalPurchaseDollars`
+- `TotalSalesQuantity`
+- `TotalSalesDollars`
+- `TotalSalesPrice`
+- `TotalExciseTax`
+- `TotalFreightCost`
 
 This pre-aggregated table avoids repeatedly performing expensive joins and aggregations during analysis or dashboarding.
+
+---
 
 ## 5. Data Cleaning
 
@@ -240,6 +255,8 @@ The `Volume` column is explicitly converted to a floating-point type.
 After feature engineering, infinite values are replaced with missing values before the processed data is written back to MySQL.
 
 These operations are implemented directly in the ETL workflow.
+
+---
 
 ## 6. Feature Engineering
 
@@ -283,11 +300,13 @@ This provides a simple comparison between sales value and purchasing cost.
 
 These metrics are generated during the ETL stage and become the foundation for subsequent analysis.
 
+---
+
 ## 7. Exploratory Data Analysis
 
 ### `EDA.ipynb`
 
-I use the EDA notebook to understand the structure and statistical characteristics of the processed vendor dataset before applying machine learning.
+The EDA notebook is used to understand the structure and statistical characteristics of the processed vendor dataset before applying machine learning.
 
 The analysis focuses on:
 
@@ -307,6 +326,8 @@ The EDA stage is important because the machine learning pipeline is based on obs
 
 For example, the ML notebook starts with 10,648 records and subsequently performs cleaning and filtering before model development.
 
+---
+
 ## 8. Visualization and Business Analysis
 
 ### `Anal_Viz.ipynb`
@@ -325,9 +346,9 @@ The analysis examines areas such as:
 - Brand-level performance
 - Freight and cost-related patterns
 
-I also use correlation analysis to understand relationships between important numerical variables.
+The project also uses correlation analysis to understand relationships between important numerical variables.
 
-For example, the Streamlit application I built examines relationships among:
+For example, the analytical application examines relationships among:
 
 ```text
 PurchasePrice
@@ -342,7 +363,9 @@ SalestoPurchaseRatio
 TotalFreightCost
 ```
 
-I specifically observed the strong relationship between `SalestoPurchaseRatio` and `ProfitMargin`, which is relevant when selecting features for machine learning.
+The analysis specifically observes the strong relationship between `SalestoPurchaseRatio` and `ProfitMargin`, which is relevant when selecting features for machine learning.
+
+---
 
 ## 9. Machine Learning
 
@@ -358,6 +381,8 @@ The project contains three machine learning tasks:
 
 The models use `random_state=42` for reproducibility.
 
+---
+
 ## 10. Machine Learning Data Preparation
 
 Before training the models, the ML notebook performs additional preprocessing.
@@ -372,7 +397,7 @@ TotalSalesDollars <= 0
 
 are removed.
 
-My reasoning is that a vendor-brand record with no sales does not provide useful information for the profit-margin prediction task.
+The reasoning is that a vendor-brand record with no sales does not provide useful information for the profit-margin prediction task.
 
 ### Removing Extreme Profit Margin Values
 
@@ -384,7 +409,7 @@ ProfitMargin <= -200
 
 are removed.
 
-I treated these extreme values as data artifacts during the analysis.
+These extreme values were treated as data artifacts during the analysis.
 
 ### Capping Stock Turnover
 
@@ -392,7 +417,7 @@ Stock turnover is capped at its 99th percentile to reduce the influence of extre
 
 ### Additional Features
 
-I create two additional features:
+Two additional features are created:
 
 #### PriceMarkup
 
@@ -423,9 +448,11 @@ After preprocessing, the dataset contains:
 
 and the supervised models use a nine-feature input matrix.
 
+---
+
 ## 11. Feature Selection
 
-I use the same nine features for both supervised learning tasks.
+The same nine features are used for both supervised learning tasks.
 
 ```text
 PurchasePrice
@@ -445,7 +472,7 @@ The feature matrix therefore has:
 10,019 rows × 9 features
 ```
 
-I intentionally exclude the following variables:
+The following variables are intentionally excluded:
 
 ```text
 GrossProfit
@@ -453,8 +480,11 @@ ProfitMargin
 StockTurnover
 ```
 
-I do this to reduce target leakage because `ProfitMargin` is the regression target, while `GrossProfit` is directly involved in calculating it.
+This is done to reduce target leakage because `ProfitMargin` is the regression target, while `GrossProfit` is directly involved in calculating it.
+
 `StockTurnover` is also excluded from the supervised feature set because it is used in the performance-label construction and risk analysis.
+
+---
 
 ## 12. Model 1 — Profit Margin Prediction
 
@@ -470,7 +500,7 @@ XGBoost Regressor
 
 ### Train/Test Split
 
-I divide the data using:
+The data is divided using:
 
 ```text
 80% → Training
@@ -487,7 +517,7 @@ The resulting split is:
 
 ```text
 Training samples: 8,015
-Testing samples: 2,004
+Testing samples:  2,004
 ```
 
 ### Model Configuration
@@ -504,7 +534,7 @@ XGBRegressor(
 
 ### Evaluation Metrics
 
-I evaluate the model using:
+The model is evaluated using:
 
 - Mean Absolute Error (MAE)
 - Root Mean Squared Error (RMSE)
@@ -519,6 +549,8 @@ R²   = 0.9440
 ```
 
 The model therefore explains approximately 94.4% of the variance in the held-out test target according to the notebook's R² calculation.
+
+---
 
 ## 13. Model 2 — Vendor Performance Classification
 
@@ -540,10 +572,10 @@ The performance label is not taken directly from an existing column.
 
 Instead:
 
-1. I percentile-rank vendors according to `ProfitMargin`.
-2. I percentile-rank vendors according to `StockTurnover`.
-3. I add the two percentile ranks.
-4. I divide the resulting composite score into three groups.
+1. Vendors are percentile-ranked according to `ProfitMargin`.
+2. Vendors are percentile-ranked according to `StockTurnover`.
+3. The two percentile ranks are added.
+4. The resulting composite score is divided into three groups.
 
 Conceptually:
 
@@ -584,7 +616,7 @@ The same nine-feature set used by the regression model is used here.
 
 ### Evaluation
 
-I evaluate the classifier using:
+The classifier is evaluated using:
 
 - Accuracy
 - Precision
@@ -595,20 +627,24 @@ I evaluate the classifier using:
 ### Current Test Results
 
 ```text
-Accuracy: 0.78
-Macro F1: 0.78
+Accuracy:    0.78
+Macro F1:    0.78
 Weighted F1: 0.78
 ```
 
 Per-class results from the current notebook:
 
-| Class | Precision | Recall | F1 |
-|-------|-----------|--------|------|
-| High | 0.88 | 0.76 | 0.81 |
-| Low | 0.82 | 0.83 | 0.83 |
-| Medium | 0.66 | 0.74 | 0.70 |
+```text
+Class     Precision   Recall   F1
+----------------------------------
+High         0.88      0.76   0.81
+Low          0.82      0.83   0.83
+Medium       0.66      0.74   0.70
+```
 
 The test set contains 2,004 samples, with 668 samples in each class.
+
+---
 
 ## 14. Model 3 — Risk and Anomaly Detection
 
@@ -617,7 +653,7 @@ Risk detection uses two complementary approaches:
 1. Rule-Based Detection
 2. Isolation Forest
 
-This allows me to combine an easily interpretable business rule with an unsupervised anomaly-detection method.
+This allows the project to combine an easily interpretable business rule with an unsupervised anomaly-detection method.
 
 ### Rule-Based Risk Detection
 
@@ -635,7 +671,7 @@ The thresholds are calculated from the processed dataset rather than manually ha
 
 ### Isolation Forest
 
-I use Isolation Forest to identify records that behave unusually across several financial and operational variables.
+Isolation Forest is used to identify records that behave unusually across several financial and operational variables.
 
 The anomaly feature set is:
 
@@ -664,14 +700,14 @@ Current notebook result:
 
 ```text
 Flagged risky: 1,002 records
-Percentage: 10.0%
+Percentage:    10.0%
 ```
 
 An anomaly score is also generated to indicate how unusual a record is relative to the learned distribution.
 
 ### Combined Risk Analysis
 
-My final risk analysis compares:
+The final risk analysis compares:
 
 ```text
 Rule-Based Risk
@@ -689,7 +725,9 @@ Rule-based only
 Isolation Forest only
 ```
 
-The combination allows me to identify both clearly defined business risks and less obvious statistical anomalies.
+The combination allows the system to identify both clearly defined business risks and less obvious statistical anomalies.
+
+---
 
 ## 15. Model Interpretability
 
@@ -699,7 +737,7 @@ For the regression model, feature importance is used to understand which input v
 
 The classification model similarly provides feature importance for understanding which variables contribute to the High / Medium / Low performance predictions.
 
-I also use:
+The project also uses:
 
 - Actual vs Predicted plots
 - Confusion matrices
@@ -711,9 +749,11 @@ I also use:
 
 These visualizations make the models easier to inspect rather than treating them as black boxes.
 
+---
+
 ## 16. Model Artifacts
 
-I export the trained models and supporting objects using `joblib`.
+The trained models and supporting objects are exported using `joblib`.
 
 The ML pipeline generates:
 
@@ -739,11 +779,13 @@ These artifacts allow the application layer to use the already-trained models wi
 
 The current notebook exports all 10 required artifacts in its final cell.
 
+---
+
 ## 17. Streamlit Application
 
 The Streamlit component is the final presentation layer of the project.
 
-I intentionally kept it separate from the main data-analysis and model-training workflow.
+It is intentionally kept separate from the main data-analysis and model-training workflow.
 
 The application provides four main sections:
 
@@ -770,6 +812,8 @@ The current application provides:
 - Interactive prediction for new vendor inputs
 
 The Streamlit pages are therefore primarily intended to expose the results of the analysis and machine learning pipeline in an interactive form.
+
+---
 
 ## 18. Project Structure
 
@@ -817,6 +861,8 @@ Vendor Performance Data Analysis/
             └── 4_Risk_Detection.py
 ```
 
+---
+
 ## 19. Technologies Used
 
 ### Data Processing
@@ -852,6 +898,8 @@ Vendor Performance Data Analysis/
 
 - Streamlit
 
+---
+
 ## 20. Installation
 
 Clone the repository:
@@ -879,6 +927,8 @@ Install the required packages:
 pip install pandas numpy matplotlib seaborn scikit-learn xgboost sqlalchemy pymysql python-dotenv joblib jupyter streamlit plotly
 ```
 
+---
+
 ## 21. Environment Configuration
 
 Create a `.env` file in the project root.
@@ -899,6 +949,8 @@ Add it to `.gitignore`:
 ```text
 .env
 ```
+
+---
 
 ## 22. Running the Project from Scratch
 
@@ -992,9 +1044,11 @@ cd streamlit_vendor_app/streamlit_app
 streamlit run app.py
 ```
 
+---
+
 ## 23. Reproducibility
 
-I designed the project so that the analytical and ML pipeline can be rebuilt when the underlying data changes.
+The project is designed so that the analytical and ML pipeline can be rebuilt when the underlying data changes.
 
 If the dataset is modified or replaced, the recommended process is:
 
@@ -1020,11 +1074,13 @@ Streamlit Application
 
 The trained `.pkl` files should be regenerated whenever the dataset or model configuration changes.
 
+---
+
 ## 24. Key Design Decisions
 
 ### Pre-aggregation
 
-I create `vendor_sales_summary` instead of repeatedly performing large joins during analysis.
+The project creates `vendor_sales_summary` instead of repeatedly performing large joins during analysis.
 
 ### Business-oriented feature engineering
 
@@ -1067,6 +1123,8 @@ Loading → Visualization → Interactive Prediction
 
 This keeps model training separate from the application layer.
 
+---
+
 ## 25. Results Summary
 
 | Component | Approach | Output |
@@ -1079,6 +1137,8 @@ This keeps model training separate from the application layer.
 | Risk Detection | Rule + Isolation Forest | Risk flags + anomaly scores |
 | Visualization | Matplotlib / Seaborn / Plotly | Business and model insights |
 | Application | Streamlit | Interactive analytical interface |
+
+---
 
 ## 26. Main Takeaways
 
@@ -1126,9 +1186,11 @@ Rule-Based Detection + Isolation Forest
 Vendor Risk / Anomaly Detection
 ```
 
+---
+
 ## 27. Future Improvements
 
-Possible extensions I'm considering include:
+Possible extensions include:
 
 - Hyperparameter tuning and cross-validation
 - Additional vendor-level aggregation
