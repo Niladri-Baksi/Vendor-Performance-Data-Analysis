@@ -98,6 +98,7 @@ Run ML_Models.ipynb
 Save trained model artifacts
    ↓
 Run Streamlit application
+```
 
 
 
@@ -764,4 +765,3 @@ Possible extensions include:
 - API-based model serving
 - Cloud deployment
 - Scheduled data ingestion and retraining
-```
