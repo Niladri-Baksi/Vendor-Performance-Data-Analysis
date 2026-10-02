@@ -1,0 +1,21 @@
+RAW DATA
+   ↓
+1. Check / verify raw CSV files
+   ↓
+2. Load raw CSVs into MySQL
+   ↓
+3. Run EDAscript.py
+   ↓
+4. Get vendor_sales_summary
+   ↓
+5. Export / use vendor_sales_summary.csv
+   ↓
+6. Run EDA.ipynb + Anal_Viz.ipynb
+   ↓
+7. Run ML_Models.ipynb from beginning
+   ↓
+8. Save fresh .pkl models
+   ↓
+9. Put .pkl files into Streamlit app/models/
+   ↓
+10. Run Streamlit → app.py
