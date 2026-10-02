@@ -350,11 +350,11 @@ I specifically observed the strong relationship between `SalestoPurchaseRatio` a
 
 The project contains three machine learning tasks:
 
-| Task                              | Type              | Algorithm                     |
-| --------------------------------- | ----------------- | ----------------------------- |
-| Profit Margin Prediction          | Regression        | XGBoost                       |
-| Vendor Performance Classification | Classification    | XGBoost                       |
-| Risk Detection                    | Anomaly Detection | Rule-based + Isolation Forest |
+| Task | Type | Algorithm |
+|------|------|-----------|
+| Profit Margin Prediction | Regression | XGBoost |
+| Vendor Performance Classification | Classification | XGBoost |
+| Risk Detection | Anomaly Detection | Rule-based + Isolation Forest |
 
 The models use `random_state=42` for reproducibility.
 
@@ -602,11 +602,11 @@ Weighted F1: 0.78
 
 Per-class results from the current notebook:
 
-| Class  | Precision | Recall | F1   |
-| ------ | --------- | ------ | ---- |
-| High   | 0.88      | 0.76   | 0.81 |
-| Low    | 0.82      | 0.83   | 0.83 |
-| Medium | 0.66      | 0.74   | 0.70 |
+| Class | Precision | Recall | F1 |
+|-------|-----------|--------|------|
+| High | 0.88 | 0.76 | 0.81 |
+| Low | 0.82 | 0.83 | 0.83 |
+| Medium | 0.66 | 0.74 | 0.70 |
 
 The test set contains 2,004 samples, with 668 samples in each class.
 
@@ -1069,16 +1069,16 @@ This keeps model training separate from the application layer.
 
 ## 25. Results Summary
 
-| Component                  | Approach                      | Output                              |
-| -------------------------- | ----------------------------- | ----------------------------------- |
-| Data Preparation           | SQL + Pandas ETL              | Vendor-level analytical dataset     |
-| Profitability Analysis     | Feature engineering + EDA     | Gross Profit, Profit Margin         |
-| Inventory Analysis         | Stock Turnover                | Inventory efficiency insights       |
-| Profit Margin Prediction   | XGBoost Regression            | Continuous profit-margin prediction |
-| Performance Classification | XGBoost Classification        | High / Medium / Low                 |
-| Risk Detection             | Rule + Isolation Forest       | Risk flags + anomaly scores         |
-| Visualization              | Matplotlib / Seaborn / Plotly | Business and model insights         |
-| Application                | Streamlit                     | Interactive analytical interface    |
+| Component | Approach | Output |
+|-----------|----------|--------|
+| Data Preparation | SQL + Pandas ETL | Vendor-level analytical dataset |
+| Profitability Analysis | Feature engineering + EDA | Gross Profit, Profit Margin |
+| Inventory Analysis | Stock Turnover | Inventory efficiency insights |
+| Profit Margin Prediction | XGBoost Regression | Continuous profit-margin prediction |
+| Performance Classification | XGBoost Classification | High / Medium / Low |
+| Risk Detection | Rule + Isolation Forest | Risk flags + anomaly scores |
+| Visualization | Matplotlib / Seaborn / Plotly | Business and model insights |
+| Application | Streamlit | Interactive analytical interface |
 
 ## 26. Main Takeaways
 
